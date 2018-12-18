@@ -106,6 +106,6 @@ class Image(object):
         previous_band_type = self.band_type
         if self.band_type == 'last' or self.band_type == '2d':
             self.set_band_type('first')
-        self.array = np.array([self._normalize_band(band) for band in self.array])
+        self.array = np.array([np.array(self._normalize_band(band)) for band in self.array])
         self.set_band_type(previous_band_type)
 
