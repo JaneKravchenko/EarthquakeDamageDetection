@@ -17,5 +17,6 @@ def get_training_set(image_path, mask_path):
         X.append(img.get_array())
         Y.append(msk.get_array())
 
+    X - np.array(X)
     X = X/X.max()  
-    return np.array(X), np.array(Y)
+    return X, np.array(Y)
