@@ -1,4 +1,4 @@
-from imageproc import imageproc
+from imageproc import Image
 import numpy as np
 from tqdm import tqdm
 
