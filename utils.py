@@ -1,6 +1,7 @@
 from imageproc import Image
 import numpy as np
 from tqdm import tqdm
+import os
 
 def get_training_set(image_path, mask_path):
   ids = os.listdir(image_path)
