@@ -97,7 +97,7 @@ class Image(object):
         min_ = np.min(band)
         alpha = max_-min_
         if alpha!=0:
-            return (band-min_)/aplha
+            return (band-min_)/alpha
         else:
             return band
 
