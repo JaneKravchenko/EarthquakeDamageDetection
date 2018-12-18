@@ -62,12 +62,12 @@ class Image(object):
     def get_band_type(self, array = None):
         band_count = self.get_band_count(array)
         if band_count!=1:
-            if array==None:
+            if type(array)==type(None):
                 if self.array.shape[-1] == band_count:
                     return 'last'
                 elif self.array.shape[0] == band_count:
                     return 'first'
-            elif array:
+            elif type(array)==np.ndarray:
                 if array.shape[-1] == band_count:
                     return 'last'
                 elif array.shape[0] == band_count:
@@ -76,12 +76,12 @@ class Image(object):
             return '2d'
 
     def get_band_count(self, array = None):
-        if array==None:
+        if type(array)==type(None):
             if self.array.ndim==3:
                 return min(self.array.shape)
             else:
                 return 1
-        elif array:
+        elif type(array) == np.ndarray:
             if array.ndim == 3:
                 return min(array.shape)
             else:
