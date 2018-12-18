@@ -10,14 +10,12 @@ def get_training_set(image_path, mask_path):
   
     for i in tqdm(ids):
         img = Image(f'{image_path}/{i}', 'image')
-        img.normalize()
+        #img.normalize()
         img.set_band_type('last')
         msk = Image(f'{mask_path}/{i}', 'mask')
         msk.set_band_type('last')
         X.append(img.get_array())
         Y.append(msk.get_array())
 
-  
-    
-  
+    X = X/X.max()  
     return np.array(X), np.array(Y)
