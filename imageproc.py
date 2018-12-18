@@ -50,7 +50,7 @@ class Image(object):
             elif to_type == 'first' and self.band_type!='2d':
                 self.array = np.array(cv2.split(self.array))
                 self.band_type == 'first'
-            elif to_type == '2d' and self.band_cout = 1:
+            elif to_type == '2d' and self.band_cout == 1:
                 if self.band_type == 'first':
                     self.array = self.array[0]
                     self.band_type == '2d'
