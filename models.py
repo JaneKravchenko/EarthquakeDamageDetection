@@ -20,9 +20,7 @@ def get_model(model_name, model_type = 'convnet', classes_count = 1, optimizer =
                         'resnet50': ResNet50,
                         'inception_v3':InceptionV3,
                         'inception_resnet_v2':InceptionResNetV2,
-                        'mobilenet':MobileNet,
-                        'densenet':DenseNet,
-                        'nasnet':NASNet}
+                        'mobilenet':MobileNet}
 
     if model_type == 'convnet':
         input_model = keras_pretrained[model_name](include_top = False, weights = weights, input_shape = input_shape)
