@@ -9,8 +9,8 @@ from keras.applications.resnet50 import ResNet50
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.mobilenet import MobileNet
-from keras.applications.densenet import DenseNet
-from keras.applications.nasnet import NASNet
+#from keras.applications.densenet import DenseNet
+#from keras.applications.nasnet import NASNet
 
 
 def get_model(model_name, model_type = 'convnet', classes_count = 1, optimizer = 'Adam', metrics = ['acc'],  weights = 'imagenet', input_shape = (224, 224, 3), savepath = None):
