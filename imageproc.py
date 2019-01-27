@@ -1,7 +1,10 @@
 import imageio
 import cv2
 import numpy as np
-
+from PIL import Image
+from scipy import misc
+import scipy
+import os
 
 
 class Image(object):
@@ -109,3 +112,106 @@ class Image(object):
         self.array = np.array(cv2.merge([self._normalize_band(band) for band in self.array]))
         self.set_band_type(previous_band_type)
 
+
+class ImageProcessing(object):
+    
+    @classmethod
+    def stretch(self, array, dim = None):  
+        if array.shape[-1]<=11:
+            array = np.array(cv2.split(array))
+        if not dim:
+            dim = array.shape[1]
+        channels= np.array(array).astype('float32')
+        channels = np.array([scipy.misc.imresize(i, (dim, dim), 'lanczos') for i in channels])
+        alphas = [np.max(i) - np.min(i) for i in channels]
+        channels_normalize = np.array([(im-np.min(im))/alphas[count] for count, im in enumerate(channels)])
+        return channels
+    
+    @classmethod
+    def read(self, path):
+        
+        if path.split('.')[-1] == 'tif':
+            array = imageio.volread(path)
+            if array.shape[-1]<=11:
+                array = np.array(cv2.split(array))
+            return array
+        
+        elif path.split('.')[-1] == 'jpg':
+            return np.array(cv2.split(np.array(Image.open(path))))
+
+        elif path.split('.')[-1] == 'png':
+            array = imageio.imread(path).astype('uint8')
+            if min(array.shape)==array.shape[0]:
+                return array
+            elif min(array.shape) == array.shape[-1]:
+                return np.array(cv2.split(array))
+        
+    @classmethod
+    def save(self, path, array):
+        if path.split('.')[-1] == 'tif': 
+            if array.shape[-1]<=11:
+                array = cv2.split(array)
+            imageio.mimwrite(path, array)
+        elif path.split('.')[-1] == 'jpg': 
+            if array.shape[0]<4:
+                array = cv2.merge(array)
+            imageio.imwrite(path, array, 'jpeg')
+     
+    
+    @classmethod 
+    def resize(self, array, rows, cols):
+        if array.shape[-1]<=11:
+            array = cv2.split(array)  
+            array = np.array([scipy.misc.imresize(i, (rows, cols), 'lanczos') for i in array])
+            return array
+
+        else:
+            array = np.array([scipy.misc.imresize(i, (rows, cols), 'lanczos') for i in array])
+            return cv2.merge(array)
+               
+    @classmethod
+    def resizeAndSave(self, array, path, rows, cols):
+        array = self.resize(array, rows, cols)
+        self.save(path, array)
+        
+        
+    @classmethod        
+    def stretchAndSave(self, array, dim, path):
+        array = self.stretch(array, dim)
+        self.save(path, array)
+        
+
+    @classmethod            
+    def getImageFromDir(self, dir, format = None):
+        files = os.listdir(dir)
+        if format:
+            return [os.path.join(dir, i) for i in files if i.split('.')[-1] == format]
+        else:
+            return [os.path.join(dir, i) for i in files]
+
+
+    @classmethod
+    def openForTraining(self, path):
+        try:
+            array = self.read(path)
+            return cv2.merge(array)
+        except Exception as e:
+            logging.error("Error in line {} {}: {}".format(e.__traceback__.tb_lineno, e.__class__.__name__, e))
+
+
+    @classmethod
+    def openAndResize(self, path, rows = None, cols = None):
+        array = self.read(path)
+        try:
+            if not (rows and cols):
+                shape = array.shape
+                if shape[0]<=11:
+                    rows = max(shape[1], shape[2])
+                    cols = rows
+                else:
+                    rows = max(shape[0], shape[1])
+                    cols = rows
+            return self.resize(array, rows, cols)
+        except Exception as e: 
+            logging.error("Error in line {} {}: {}".format(e.__traceback__.tb_lineno, e.__class__.__name__, e))
+            return np.ones(array.shape)
